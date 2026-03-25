@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Graph — LeetCode Patterns</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0d0f14;
+    --surface: #141720;
+    --border: #252a36;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --accent-blue: #4f8ef7;
+    --accent-amber: #f5a623;
+    --accent-teal: #2dd4a0;
+    --accent-coral: #f06060;
+    --accent-purple: #a78bfa;
+    --accent-green: #4ade80;
+    --easy: #22c55e;
+    --medium: #f59e0b;
+    --hard: #ef4444;
+    --font-head: 'Syne', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-mono); min-height: 100vh; padding: 2rem 1.5rem 4rem; }
+  .page-header { margin-bottom: 2.5rem; border-left: 3px solid var(--accent-blue); padding-left: 1.2rem; }
+  .topic-label { font-size: 11px; color: var(--accent-blue); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
+  h1 { font-family: var(--font-head); font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 700; color: var(--text); line-height: 1.2; }
+  .subtitle { font-size: 13px; color: var(--muted); margin-top: 8px; }
+  .pattern-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 1.25rem; overflow: hidden; }
+  .pattern-card-header { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .pat-badge { font-size: 10px; font-weight: 500; padding: 3px 10px; border-radius: 99px; white-space: nowrap; letter-spacing: 0.04em; }
+  .pat-blue   { background: rgba(79,142,247,0.15); color: var(--accent-blue);   border: 1px solid rgba(79,142,247,0.3); }
+  .pat-amber  { background: rgba(245,166,35,0.15); color: var(--accent-amber);  border: 1px solid rgba(245,166,35,0.3); }
+  .pat-teal   { background: rgba(45,212,160,0.15); color: var(--accent-teal);   border: 1px solid rgba(45,212,160,0.3); }
+  .pat-coral  { background: rgba(240,96,96,0.15);  color: var(--accent-coral);  border: 1px solid rgba(240,96,96,0.3); }
+  .pat-purple { background: rgba(167,139,250,0.15);color: var(--accent-purple); border: 1px solid rgba(167,139,250,0.3); }
+  .pat-green  { background: rgba(74,222,128,0.15); color: var(--accent-green);  border: 1px solid rgba(74,222,128,0.3); }
+  .pat-name { font-family: var(--font-head); font-size: 15px; font-weight: 600; color: var(--text); }
+  .pat-complexity { font-size: 11px; color: var(--muted); margin-left: auto; }
+  .when-line { font-size: 12px; color: var(--muted); padding: 8px 18px; border-bottom: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; }
+  th { font-size: 11px; color: var(--muted); text-align: left; padding: 8px 18px; border-bottom: 1px solid var(--border); letter-spacing: 0.06em; text-transform: uppercase; }
+  td { padding: 10px 18px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  .num { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  a { color: var(--accent-blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .variant { font-size: 11px; color: var(--muted); }
+  .diff { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 99px; white-space: nowrap; }
+  .easy  { background: rgba(34,197,94,0.12);  color: var(--easy);   border: 1px solid rgba(34,197,94,0.3); }
+  .medium{ background: rgba(245,158,11,0.12); color: var(--medium); border: 1px solid rgba(245,158,11,0.3); }
+  .hard  { background: rgba(239,68,68,0.12);  color: var(--hard);   border: 1px solid rgba(239,68,68,0.3); }
+  .insight { background: #0a0c10; border-top: 1px solid var(--border); padding: 12px 18px; font-size: 12px; color: var(--muted); line-height: 1.7; }
+  .insight code { color: var(--accent-teal); }
+  .decision { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-top: 2rem; }
+  .decision-title { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; padding: 12px 18px; border-bottom: 1px solid var(--border); }
+  .decision-row { display: flex; align-items: center; gap: 10px; padding: 10px 18px; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .decision-row:last-child { border-bottom: none; }
+  .dc { flex: 1.8; color: var(--muted); }
+  .darr { color: var(--border); flex-shrink: 0; }
+  .ds { flex: 2; color: var(--text); }
+</style>
+</head>
+<body>
+<div class="page-header">
+  <div class="topic-label">LeetCode Patterns</div>
+  <h1>Graph</h1>
+  <div class="subtitle">BFS · DFS · Union-Find · Topological Sort · Shortest Path</div>
+</div>
+
+<!-- Pattern 1: BFS/DFS traversal -->
+<div class="pattern-card">
+  <div class="pattern-card-header">
+    <span class="pat-badge pat-blue">Pattern 1</span>
+    <span class="pat-name">BFS / DFS — connected components &amp; flood fill</span>
+    <span class="pat-complexity">O(V + E)</span>
+  </div>
+  <div class="when-line">Count/label connected regions; reachability; grid traversal</div>
+  <table>
+    <tr><th>No.</th><th>Problem</th><th>Variant</th><th>Diff</th></tr>
+    <tr>
+      <td class="num">200</td>
+      <td><a href="https://leetcode.com/problems/number-of-islands/" target="_blank">Number of Islands</a></td>
+      <td class="variant">count connected land components in grid</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">695</td>
+      <td><a href="https://leetcode.com/problems/max-area-of-island/" target="_blank">Max Area of Island</a></td>
+      <td class="variant">largest connected land area</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">130</td>
+      <td><a href="https://leetcode.com/problems/surrounded-regions/" target="_blank">Surrounded Regions</a></td>
+      <td class="variant">flip enclosed O's — BFS from border</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">733</td>
+      <td><a href="https://leetcode.com/problems/flood-fill/" target="_blank">Flood Fill</a></td>
+      <td class="variant">paint connected region new color</td>
+      <td><span class="diff easy">Easy</span></td>
+    </tr>
+    <tr>
+      <td class="num">547</td>
+      <td><a href="https://leetcode.com/problems/number-of-provinces/" target="_blank">Number of Provinces</a></td>
+      <td class="variant">count connected components in adj matrix</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+  </table>
+  <div class="insight">BFS = shortest path in unweighted graph. DFS = faster for just reachability. Both O(V+E).</div>
+</div>
+
+<!-- Pattern 2: Shortest path BFS -->
+<div class="pattern-card">
+  <div class="pattern-card-header">
+    <span class="pat-badge pat-amber">Pattern 2</span>
+    <span class="pat-name">BFS — shortest path (unweighted)</span>
+    <span class="pat-complexity">O(V + E)</span>
+  </div>
+  <div class="when-line">Minimum steps/distance in unweighted or unit-weight graph</div>
+  <table>
+    <tr><th>No.</th><th>Problem</th><th>Variant</th><th>Diff</th></tr>
+    <tr>
+      <td class="num">127</td>
+      <td><a href="https://leetcode.com/problems/word-ladder/" target="_blank">Word Ladder</a></td>
+      <td class="variant">min transformations, single char diff</td>
+      <td><span class="diff hard">Hard</span></td>
+    </tr>
+    <tr>
+      <td class="num">994</td>
+      <td><a href="https://leetcode.com/problems/rotting-oranges/" target="_blank">Rotting Oranges</a></td>
+      <td class="variant">multi-source BFS, min minutes to rot all</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">1091</td>
+      <td><a href="https://leetcode.com/problems/shortest-path-in-binary-matrix/" target="_blank">Shortest Path in Binary Matrix</a></td>
+      <td class="variant">8-directional BFS on 0-1 grid</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">1293</td>
+      <td><a href="https://leetcode.com/problems/shortest-path-in-a-grid-with-obstacles-elimination/" target="_blank">Shortest Path in Grid with Obstacles Elimination</a></td>
+      <td class="variant">BFS + state (pos, remaining k)</td>
+      <td><span class="diff hard">Hard</span></td>
+    </tr>
+  </table>
+  <div class="insight">State = (position, extra_dims). For grid + constraint: <code>visited[r][c][state]</code></div>
+</div>
+
+<!-- Pattern 3: Dijkstra / weighted shortest path -->
+<div class="pattern-card">
+  <div class="pattern-card-header">
+    <span class="pat-badge pat-teal">Pattern 3</span>
+    <span class="pat-name">Dijkstra — weighted shortest path</span>
+    <span class="pat-complexity">O((V + E) log V)</span>
+  </div>
+  <div class="when-line">Non-negative edge weights — use min-heap</div>
+  <table>
+    <tr><th>No.</th><th>Problem</th><th>Variant</th><th>Diff</th></tr>
+    <tr>
+      <td class="num">743</td>
+      <td><a href="https://leetcode.com/problems/network-delay-time/" target="_blank">Network Delay Time</a></td>
+      <td class="variant">single-source shortest path</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">1631</td>
+      <td><a href="https://leetcode.com/problems/path-with-minimum-effort/" target="_blank">Path With Minimum Effort</a></td>
+      <td class="variant">minimize max edge weight on path</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">778</td>
+      <td><a href="https://leetcode.com/problems/swim-in-rising-water/" target="_blank">Swim in Rising Water</a></td>
+      <td class="variant">minimize bottleneck — Dijkstra or binary search</td>
+      <td><span class="diff hard">Hard</span></td>
+    </tr>
+    <tr>
+      <td class="num">787</td>
+      <td><a href="https://leetcode.com/problems/cheapest-flights-within-k-stops/" target="_blank">Cheapest Flights Within K Stops</a></td>
+      <td class="variant">Dijkstra/Bellman-Ford with stop constraint</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+  </table>
+  <div class="insight"><code>heap = [(cost, node)]</code> — skip if cost > dist[node] (lazy deletion)</div>
+</div>
+
+<!-- Pattern 4: Topological sort -->
+<div class="pattern-card">
+  <div class="pattern-card-header">
+    <span class="pat-badge pat-coral">Pattern 4</span>
+    <span class="pat-name">Topological sort (Kahn's BFS / DFS)</span>
+    <span class="pat-complexity">O(V + E)</span>
+  </div>
+  <div class="when-line">DAGs — ordering with dependencies; cycle detection</div>
+  <table>
+    <tr><th>No.</th><th>Problem</th><th>Variant</th><th>Diff</th></tr>
+    <tr>
+      <td class="num">207</td>
+      <td><a href="https://leetcode.com/problems/course-schedule/" target="_blank">Course Schedule</a></td>
+      <td class="variant">detect cycle in directed graph</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">210</td>
+      <td><a href="https://leetcode.com/problems/course-schedule-ii/" target="_blank">Course Schedule II</a></td>
+      <td class="variant">return topological order</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">269</td>
+      <td><a href="https://leetcode.com/problems/alien-dictionary/" target="_blank">Alien Dictionary</a></td>
+      <td class="variant">infer char order from sorted words</td>
+      <td><span class="diff hard">Hard</span></td>
+    </tr>
+    <tr>
+      <td class="num">2115</td>
+      <td><a href="https://leetcode.com/problems/find-all-possible-recipes-from-given-supplies/" target="_blank">Find All Possible Recipes from Given Supplies</a></td>
+      <td class="variant">topo sort with ingredient dependencies</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+  </table>
+  <div class="insight">Kahn's: process 0-indegree nodes, reduce neighbors — no nodes left with edges = no cycle</div>
+</div>
+
+<!-- Pattern 5: Union-Find -->
+<div class="pattern-card">
+  <div class="pattern-card-header">
+    <span class="pat-badge pat-purple">Pattern 5</span>
+    <span class="pat-name">Union-Find (Disjoint Set Union)</span>
+    <span class="pat-complexity">O(α(n)) per op</span>
+  </div>
+  <div class="when-line">Dynamic connectivity — merge groups, detect cycles, count components</div>
+  <table>
+    <tr><th>No.</th><th>Problem</th><th>Variant</th><th>Diff</th></tr>
+    <tr>
+      <td class="num">684</td>
+      <td><a href="https://leetcode.com/problems/redundant-connection/" target="_blank">Redundant Connection</a></td>
+      <td class="variant">find edge that creates a cycle</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">721</td>
+      <td><a href="https://leetcode.com/problems/accounts-merge/" target="_blank">Accounts Merge</a></td>
+      <td class="variant">merge accounts sharing emails</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">1202</td>
+      <td><a href="https://leetcode.com/problems/smallest-string-with-swaps/" target="_blank">Smallest String With Swaps</a></td>
+      <td class="variant">group swappable indices, sort each group</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">1579</td>
+      <td><a href="https://leetcode.com/problems/remove-max-number-of-edges-to-keep-graph-fully-traversable/" target="_blank">Remove Max Number of Edges to Keep Graph Traversable</a></td>
+      <td class="variant">dual DSU for Alice and Bob</td>
+      <td><span class="diff hard">Hard</span></td>
+    </tr>
+  </table>
+  <div class="insight">Always use path compression + union by rank — amortized near O(1). Init: <code>parent[i] = i</code></div>
+</div>
+
+<!-- Pattern 6: Bipartite / coloring -->
+<div class="pattern-card">
+  <div class="pattern-card-header">
+    <span class="pat-badge pat-green">Pattern 6</span>
+    <span class="pat-name">Bipartite check / graph coloring</span>
+    <span class="pat-complexity">O(V + E)</span>
+  </div>
+  <div class="when-line">2-color graph — detect odd cycles; partition into two groups</div>
+  <table>
+    <tr><th>No.</th><th>Problem</th><th>Variant</th><th>Diff</th></tr>
+    <tr>
+      <td class="num">785</td>
+      <td><a href="https://leetcode.com/problems/is-graph-bipartite/" target="_blank">Is Graph Bipartite?</a></td>
+      <td class="variant">BFS/DFS 2-coloring check</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">886</td>
+      <td><a href="https://leetcode.com/problems/possible-bipartition/" target="_blank">Possible Bipartition</a></td>
+      <td class="variant">split people into two non-disliking groups</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+  </table>
+  <div class="insight">BFS: assign alternating colors; conflict on same color → not bipartite</div>
+</div>
+
+<div class="decision">
+  <div class="decision-title">Quick decision guide</div>
+  <div class="decision-row"><span class="dc">Count connected regions / components?</span><span class="darr">→</span><span class="ds">Pattern 1 — BFS/DFS + visited</span></div>
+  <div class="decision-row"><span class="dc">Min steps, unit weights?</span><span class="darr">→</span><span class="ds">Pattern 2 — BFS</span></div>
+  <div class="decision-row"><span class="dc">Min cost path, non-negative weights?</span><span class="darr">→</span><span class="ds">Pattern 3 — Dijkstra + min-heap</span></div>
+  <div class="decision-row"><span class="dc">Dependencies / ordering / cycle detection?</span><span class="darr">→</span><span class="ds">Pattern 4 — topological sort</span></div>
+  <div class="decision-row"><span class="dc">Dynamic merging / connectivity queries?</span><span class="darr">→</span><span class="ds">Pattern 5 — Union-Find DSU</span></div>
+  <div class="decision-row"><span class="dc">Split into two non-conflicting groups?</span><span class="darr">→</span><span class="ds">Pattern 6 — bipartite 2-coloring</span></div>
+</div>
+</body>
+</html>

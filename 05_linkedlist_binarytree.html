@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linked List / Binary Tree — Edit Nodes — LeetCode Patterns</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0d0f14;
+    --surface: #141720;
+    --border: #252a36;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --accent-blue: #4f8ef7;
+    --accent-amber: #f5a623;
+    --accent-teal: #2dd4a0;
+    --accent-coral: #f06060;
+    --accent-purple: #a78bfa;
+    --accent-pink: #f472b6;
+    --easy: #22c55e;
+    --medium: #f59e0b;
+    --hard: #ef4444;
+    --font-head: 'Syne', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-mono); min-height: 100vh; padding: 2rem 1.5rem 4rem; }
+  .page-header { margin-bottom: 2.5rem; border-left: 3px solid var(--accent-pink); padding-left: 1.2rem; }
+  .topic-label { font-size: 11px; color: var(--accent-pink); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
+  h1 { font-family: var(--font-head); font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 700; color: var(--text); line-height: 1.2; }
+  .subtitle { font-size: 13px; color: var(--muted); margin-top: 8px; }
+  .section-sep { display: flex; align-items: center; gap: 12px; margin: 2rem 0 1rem; }
+  .section-sep-line { flex: 1; height: 1px; background: var(--border); }
+  .section-sep-label { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap; }
+  .pattern-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 1.25rem; overflow: hidden; }
+  .pattern-card-header { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .pat-badge { font-size: 10px; font-weight: 500; padding: 3px 10px; border-radius: 99px; white-space: nowrap; letter-spacing: 0.04em; }
+  .pat-blue   { background: rgba(79,142,247,0.15); color: var(--accent-blue);   border: 1px solid rgba(79,142,247,0.3); }
+  .pat-amber  { background: rgba(245,166,35,0.15); color: var(--accent-amber);  border: 1px solid rgba(245,166,35,0.3); }
+  .pat-teal   { background: rgba(45,212,160,0.15); color: var(--accent-teal);   border: 1px solid rgba(45,212,160,0.3); }
+  .pat-coral  { background: rgba(240,96,96,0.15);  color: var(--accent-coral);  border: 1px solid rgba(240,96,96,0.3); }
+  .pat-purple { background: rgba(167,139,250,0.15);color: var(--accent-purple); border: 1px solid rgba(167,139,250,0.3); }
+  .pat-pink   { background: rgba(244,114,182,0.15);color: var(--accent-pink);   border: 1px solid rgba(244,114,182,0.3); }
+  .pat-name { font-family: var(--font-head); font-size: 15px; font-weight: 600; color: var(--text); }
+  .pat-complexity { font-size: 11px; color: var(--muted); margin-left: auto; }
+  .when-line { font-size: 12px; color: var(--muted); padding: 8px 18px; border-bottom: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; }
+  th { font-size: 11px; color: var(--muted); text-align: left; padding: 8px 18px; border-bottom: 1px solid var(--border); letter-spacing: 0.06em; text-transform: uppercase; }
+  td { padding: 10px 18px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  .num { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  a { color: var(--accent-blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .variant { font-size: 11px; color: var(--muted); }
+  .diff { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 99px; white-space: nowrap; }
+  .easy  { background: rgba(34,197,94,0.12);  color: var(--easy);   border: 1px solid rgba(34,197,94,0.3); }
+  .medium{ background: rgba(245,158,11,0.12); color: var(--medium); border: 1px solid rgba(245,158,11,0.3); }
+  .hard  { background: rgba(239,68,68,0.12);  color: var(--hard);   border: 1px solid rgba(239,68,68,0.3); }
+  .insight { background: #0a0c10; border-top: 1px solid var(--border); padding: 12px 18px; font-size: 12px; color: var(--muted); line-height: 1.7; }
+  .insight code { color: var(--accent-teal); }
+  .decision { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-top: 2rem; }
+  .decision-title { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; padding: 12px 18px; border-bottom: 1px solid var(--border); }
+  .decision-row { display: flex; align-items: center; gap: 10px; padding: 10px 18px; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .decision-row:last-child { border-bottom: none; }
+  .dc { flex: 1.8; color: var(--muted); }
+  .darr { color: var(--border); flex-shrink: 0; }
+  .ds { flex: 2; color: var(--text); }
+</style>
+</head>
+<body>
+<div class="page-header">
+  <div class="topic-label">LeetCode Patterns</div>
+  <h1>Linked list / binary tree — edit nodes</h1>
+  <div class="subtitle">Pointer manipulation, in-place structural modification</div>
+</div>
+
+<!-- ── LINKED LIST ── -->
+<div class="section-sep">
+  <div class="section-sep-line"></div>
+  <div class="section-sep-label">Linked list</div>
+  <div class="section-sep-line"></div>
+</div>
+
+<!-- LL Pattern 1 -->
+<div class="pattern-card">
+  <div class="pattern-card-header">
+    <span class="pat-badge pat-blue">LL-1</span>
+    <span class="pat-name">Reversal (iterative &amp; recursive)</span>
+    <span class="pat-complexity">O(n) · O(1)</span>
+  </div>
+  <div class="when-line">Reverse entire list or a subrange [left, right] in-place</div>
+  <table>
+    <tr><th>No.</th><th>Problem</th><th>Variant</th><th>Diff</th></tr>
+    <tr>
+      <td class="num">206</td>
+      <td><a href="https://leetcode.com/problems/reverse-linked-list/" target="_blank">Reverse Linked List</a></td>
+      <td class="variant">full reversal, iterative + recursive</td>
+      <td><span class="diff easy">Easy</span></td>
+    </tr>
+    <tr>
+      <td class="num">92</td>
+      <td><a href="https://leetcode.com/problems/reverse-linked-list-ii/" target="_blank">Reverse Linked List II</a></td>
+      <td class="variant">reverse nodes from left to right index</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">25</td>
+      <td><a href="https://leetcode.com/problems/reverse-nodes-in-k-group/" target="_blank">Reverse Nodes in k-Group</a></td>
+      <td class="variant">reverse every k nodes, keep remainder</td>
+      <td><span class="diff hard">Hard</span></td>
+    </tr>
+    <tr>
+      <td class="num">2074</td>
+      <td><a href="https://leetcode.com/problems/reverse-nodes-in-even-length-groups/" target="_blank">Reverse Nodes in Even Length Groups</a></td>
+      <td class="variant">conditional group reversal</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+  </table>
+  <div class="insight">Template: <code>prev=null, cur=head</code>; each step: <code>next=cur.next; cur.next=prev; prev=cur; cur=next</code></div>
+</div>
+
+<!-- LL Pattern 2 -->
+<div class="pattern-card">
+  <div class="pattern-card-header">
+    <span class="pat-badge pat-amber">LL-2</span>
+    <span class="pat-name">Delete / remove nodes</span>
+    <span class="pat-complexity">O(n) · O(1)</span>
+  </div>
+  <div class="when-line">Unlink target nodes by re-routing .next pointers; dummy head avoids edge cases</div>
+  <table>
+    <tr><th>No.</th><th>Problem</th><th>Variant</th><th>Diff</th></tr>
+    <tr>
+      <td class="num">237</td>
+      <td><a href="https://leetcode.com/problems/delete-node-in-a-linked-list/" target="_blank">Delete Node in a Linked List</a></td>
+      <td class="variant">copy-and-skip (no prev pointer given)</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">19</td>
+      <td><a href="https://leetcode.com/problems/remove-nth-node-from-end-of-list/" target="_blank">Remove Nth Node From End of List</a></td>
+      <td class="variant">two-pointer gap of n</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">83</td>
+      <td><a href="https://leetcode.com/problems/remove-duplicates-from-sorted-list/" target="_blank">Remove Duplicates from Sorted List</a></td>
+      <td class="variant">keep one copy of each value</td>
+      <td><span class="diff easy">Easy</span></td>
+    </tr>
+    <tr>
+      <td class="num">82</td>
+      <td><a href="https://leetcode.com/problems/remove-duplicates-from-sorted-list-ii/" target="_blank">Remove Duplicates from Sorted List II</a></td>
+      <td class="variant">remove all nodes with any duplicate value</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+  </table>
+  <div class="insight">Always attach a <code>dummy</code> head — delete-head edge case disappears: <code>dummy.next = head</code></div>
+</div>
+
+<!-- LL Pattern 3 -->
+<div class="pattern-card">
+  <div class="pattern-card-header">
+    <span class="pat-badge pat-teal">LL-3</span>
+    <span class="pat-name">Reorder &amp; merge</span>
+    <span class="pat-complexity">O(n) · O(1)</span>
+  </div>
+  <div class="when-line">Interleave, zip, or merge lists by pointer manipulation only</div>
+  <table>
+    <tr><th>No.</th><th>Problem</th><th>Variant</th><th>Diff</th></tr>
+    <tr>
+      <td class="num">21</td>
+      <td><a href="https://leetcode.com/problems/merge-two-sorted-lists/" target="_blank">Merge Two Sorted Lists</a></td>
+      <td class="variant">merge two sorted lists in-place</td>
+      <td><span class="diff easy">Easy</span></td>
+    </tr>
+    <tr>
+      <td class="num">23</td>
+      <td><a href="https://leetcode.com/problems/merge-k-sorted-lists/" target="_blank">Merge k Sorted Lists</a></td>
+      <td class="variant">k-way merge via min-heap</td>
+      <td><span class="diff hard">Hard</span></td>
+    </tr>
+    <tr>
+      <td class="num">143</td>
+      <td><a href="https://leetcode.com/problems/reorder-list/" target="_blank">Reorder List</a></td>
+      <td class="variant">interleave first and reversed second half</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">328</td>
+      <td><a href="https://leetcode.com/problems/odd-even-linked-list/" target="_blank">Odd Even Linked List</a></td>
+      <td class="variant">group odd-index then even-index nodes</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">148</td>
+      <td><a href="https://leetcode.com/problems/sort-list/" target="_blank">Sort List</a></td>
+      <td class="variant">merge sort on linked list, O(n log n) O(1)</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+  </table>
+  <div class="insight">Find midpoint: slow/fast pointer. Then split, reverse second half, merge — all O(1) space</div>
+</div>
+
+<!-- ── BINARY TREE ── -->
+<div class="section-sep">
+  <div class="section-sep-line"></div>
+  <div class="section-sep-label">Binary tree — edit nodes</div>
+  <div class="section-sep-line"></div>
+</div>
+
+<!-- BT Pattern 1 -->
+<div class="pattern-card">
+  <div class="pattern-card-header">
+    <span class="pat-badge pat-coral">BT-1</span>
+    <span class="pat-name">Insert / delete nodes</span>
+    <span class="pat-complexity">O(h) — O(log n) balanced</span>
+  </div>
+  <div class="when-line">Add or remove nodes while maintaining BST / tree invariants</div>
+  <table>
+    <tr><th>No.</th><th>Problem</th><th>Variant</th><th>Diff</th></tr>
+    <tr>
+      <td class="num">701</td>
+      <td><a href="https://leetcode.com/problems/insert-into-a-binary-search-tree/" target="_blank">Insert into a Binary Search Tree</a></td>
+      <td class="variant">BST insert preserving order</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">450</td>
+      <td><a href="https://leetcode.com/problems/delete-node-in-a-bst/" target="_blank">Delete Node in a BST</a></td>
+      <td class="variant">3 cases: leaf, one child, two children (successor)</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">814</td>
+      <td><a href="https://leetcode.com/problems/binary-tree-pruning/" target="_blank">Binary Tree Pruning</a></td>
+      <td class="variant">remove subtrees containing only 0s</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">669</td>
+      <td><a href="https://leetcode.com/problems/trim-a-binary-search-tree/" target="_blank">Trim a Binary Search Tree</a></td>
+      <td class="variant">remove nodes outside [low, high] range</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+  </table>
+  <div class="insight">Delete with two children: replace value with in-order successor (smallest in right subtree), delete successor</div>
+</div>
+
+<!-- BT Pattern 2 -->
+<div class="pattern-card">
+  <div class="pattern-card-header">
+    <span class="pat-badge pat-purple">BT-2</span>
+    <span class="pat-name">Structural transformation</span>
+    <span class="pat-complexity">O(n) · O(h)</span>
+  </div>
+  <div class="when-line">Rebuild, rotate, or reshape the tree's structure</div>
+  <table>
+    <tr><th>No.</th><th>Problem</th><th>Variant</th><th>Diff</th></tr>
+    <tr>
+      <td class="num">226</td>
+      <td><a href="https://leetcode.com/problems/invert-binary-tree/" target="_blank">Invert Binary Tree</a></td>
+      <td class="variant">swap left and right subtrees recursively</td>
+      <td><span class="diff easy">Easy</span></td>
+    </tr>
+    <tr>
+      <td class="num">114</td>
+      <td><a href="https://leetcode.com/problems/flatten-binary-tree-to-linked-list/" target="_blank">Flatten Binary Tree to Linked List</a></td>
+      <td class="variant">flatten to right-skewed list in pre-order</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">654</td>
+      <td><a href="https://leetcode.com/problems/maximum-binary-tree/" target="_blank">Maximum Binary Tree</a></td>
+      <td class="variant">build tree: root = max, recurse on halves</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">108</td>
+      <td><a href="https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree/" target="_blank">Convert Sorted Array to BST</a></td>
+      <td class="variant">build balanced BST from sorted array</td>
+      <td><span class="diff easy">Easy</span></td>
+    </tr>
+    <tr>
+      <td class="num">1372</td>
+      <td><a href="https://leetcode.com/problems/longest-zigzag-path-in-a-binary-tree/" target="_blank">Longest ZigZag Path in a Binary Tree</a></td>
+      <td class="variant">track direction at each node, update max</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+  </table>
+  <div class="insight">Flatten (114): find rightmost of left subtree, attach right child there, move left to right, repeat</div>
+</div>
+
+<!-- BT Pattern 3 -->
+<div class="pattern-card">
+  <div class="pattern-card-header">
+    <span class="pat-badge pat-pink">BT-3</span>
+    <span class="pat-name">Value / pointer modification in BST</span>
+    <span class="pat-complexity">O(n) · O(h)</span>
+  </div>
+  <div class="when-line">Update node values in-place using BST ordering properties</div>
+  <table>
+    <tr><th>No.</th><th>Problem</th><th>Variant</th><th>Diff</th></tr>
+    <tr>
+      <td class="num">538</td>
+      <td><a href="https://leetcode.com/problems/convert-bst-to-greater-tree/" target="_blank">Convert BST to Greater Tree</a></td>
+      <td class="variant">reverse in-order traversal, accumulate suffix sum</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">1038</td>
+      <td><a href="https://leetcode.com/problems/binary-search-tree-to-greater-sum-tree/" target="_blank">BST to Greater Sum Tree</a></td>
+      <td class="variant">same as 538 — reverse in-order</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">700</td>
+      <td><a href="https://leetcode.com/problems/search-in-a-binary-search-tree/" target="_blank">Search in a Binary Search Tree</a></td>
+      <td class="variant">locate and return subtree rooted at value</td>
+      <td><span class="diff easy">Easy</span></td>
+    </tr>
+    <tr>
+      <td class="num">1932</td>
+      <td><a href="https://leetcode.com/problems/merge-bsts-to-create-single-bst/" target="_blank">Merge BSTs to Create Single BST</a></td>
+      <td class="variant">merge leaf nodes of multiple BSTs</td>
+      <td><span class="diff hard">Hard</span></td>
+    </tr>
+  </table>
+  <div class="insight">Right → root → left traversal on BST yields descending order — accumulate a running suffix sum to update each node</div>
+</div>
+
+<div class="decision">
+  <div class="decision-title">Quick decision guide</div>
+  <div class="decision-row"><span class="dc">Reverse a list range / k-group?</span><span class="darr">→</span><span class="ds">LL-1 — prev/cur/next triple pointer</span></div>
+  <div class="decision-row"><span class="dc">Remove specific nodes from list?</span><span class="darr">→</span><span class="ds">LL-2 — dummy head + two pointers</span></div>
+  <div class="decision-row"><span class="dc">Merge, interleave, or sort lists?</span><span class="darr">→</span><span class="ds">LL-3 — find mid, split, merge</span></div>
+  <div class="decision-row"><span class="dc">Add/remove node preserving BST order?</span><span class="darr">→</span><span class="ds">BT-1 — recurse left/right by value</span></div>
+  <div class="decision-row"><span class="dc">Reshape or restructure tree?</span><span class="darr">→</span><span class="ds">BT-2 — post-order or Morris traversal</span></div>
+  <div class="decision-row"><span class="dc">Update values using BST properties?</span><span class="darr">→</span><span class="ds">BT-3 — reverse in-order traversal</span></div>
+</div>
+</body>
+</html>

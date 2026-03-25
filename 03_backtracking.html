@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Backtracking — LeetCode Patterns</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0d0f14;
+    --surface: #141720;
+    --border: #252a36;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --accent-blue: #4f8ef7;
+    --accent-amber: #f5a623;
+    --accent-teal: #2dd4a0;
+    --accent-coral: #f06060;
+    --accent-purple: #a78bfa;
+    --easy: #22c55e;
+    --medium: #f59e0b;
+    --hard: #ef4444;
+    --font-head: 'Syne', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-mono); min-height: 100vh; padding: 2rem 1.5rem 4rem; }
+  .page-header { margin-bottom: 2.5rem; border-left: 3px solid var(--accent-purple); padding-left: 1.2rem; }
+  .topic-label { font-size: 11px; color: var(--accent-purple); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
+  h1 { font-family: var(--font-head); font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 700; color: var(--text); line-height: 1.2; }
+  .subtitle { font-size: 13px; color: var(--muted); margin-top: 8px; }
+  .template-box { background: #0a0c10; border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin-bottom: 1.5rem; font-size: 12px; color: var(--muted); line-height: 1.9; }
+  .template-box code { color: var(--accent-purple); }
+  .pattern-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 1.25rem; overflow: hidden; }
+  .pattern-card-header { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .pat-badge { font-size: 10px; font-weight: 500; padding: 3px 10px; border-radius: 99px; white-space: nowrap; letter-spacing: 0.04em; }
+  .pat-blue   { background: rgba(79,142,247,0.15); color: var(--accent-blue);   border: 1px solid rgba(79,142,247,0.3); }
+  .pat-amber  { background: rgba(245,166,35,0.15); color: var(--accent-amber);  border: 1px solid rgba(245,166,35,0.3); }
+  .pat-teal   { background: rgba(45,212,160,0.15); color: var(--accent-teal);   border: 1px solid rgba(45,212,160,0.3); }
+  .pat-coral  { background: rgba(240,96,96,0.15);  color: var(--accent-coral);  border: 1px solid rgba(240,96,96,0.3); }
+  .pat-purple { background: rgba(167,139,250,0.15);color: var(--accent-purple); border: 1px solid rgba(167,139,250,0.3); }
+  .pat-name { font-family: var(--font-head); font-size: 15px; font-weight: 600; color: var(--text); }
+  .pat-complexity { font-size: 11px; color: var(--muted); margin-left: auto; }
+  .when-line { font-size: 12px; color: var(--muted); padding: 8px 18px; border-bottom: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; }
+  th { font-size: 11px; color: var(--muted); text-align: left; padding: 8px 18px; border-bottom: 1px solid var(--border); letter-spacing: 0.06em; text-transform: uppercase; }
+  td { padding: 10px 18px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  .num { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  a { color: var(--accent-blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .variant { font-size: 11px; color: var(--muted); }
+  .diff { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 99px; white-space: nowrap; }
+  .easy  { background: rgba(34,197,94,0.12);  color: var(--easy);   border: 1px solid rgba(34,197,94,0.3); }
+  .medium{ background: rgba(245,158,11,0.12); color: var(--medium); border: 1px solid rgba(245,158,11,0.3); }
+  .hard  { background: rgba(239,68,68,0.12);  color: var(--hard);   border: 1px solid rgba(239,68,68,0.3); }
+  .insight { background: #0a0c10; border-top: 1px solid var(--border); padding: 12px 18px; font-size: 12px; color: var(--muted); line-height: 1.7; }
+  .insight code { color: var(--accent-purple); }
+  .decision { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-top: 2rem; }
+  .decision-title { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; padding: 12px 18px; border-bottom: 1px solid var(--border); }
+  .decision-row { display: flex; align-items: center; gap: 10px; padding: 10px 18px; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .decision-row:last-child { border-bottom: none; }
+  .dc { flex: 1.6; color: var(--muted); }
+  .darr { color: var(--border); flex-shrink: 0; }
+  .ds { flex: 2; color: var(--text); }
+</style>
+</head>
+<body>
+<div class="page-header">
+  <div class="topic-label">LeetCode Patterns</div>
+  <h1>Backtracking</h1>
+  <div class="subtitle">Exhaustive search with pruning — choose, explore, unchoose</div>
+</div>
+
+<div class="template-box">
+  Universal template: <code>backtrack(state, choices)</code><br>
+  &nbsp;&nbsp;if <code>isGoal(state)</code>: record result &amp; return<br>
+  &nbsp;&nbsp;for choice in choices:<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;<code>make(choice)</code> → recurse → <code>undo(choice)</code>
+</div>
+
+<!-- Pattern 1 -->
+<div class="pattern-card">
+  <div class="pattern-card-header">
+    <span class="pat-badge pat-blue">Pattern 1</span>
+    <span class="pat-name">Subsets &amp; combinations</span>
+    <span class="pat-complexity">O(2ⁿ) or O(C(n,k))</span>
+  </div>
+  <div class="when-line">Enumerate all subsets / k-sized groups — start index increases each level</div>
+  <table>
+    <tr><th>No.</th><th>Problem</th><th>Variant</th><th>Diff</th></tr>
+    <tr>
+      <td class="num">78</td>
+      <td><a href="https://leetcode.com/problems/subsets/" target="_blank">Subsets</a></td>
+      <td class="variant">all subsets, no duplicates in input</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">90</td>
+      <td><a href="https://leetcode.com/problems/subsets-ii/" target="_blank">Subsets II</a></td>
+      <td class="variant">subsets, input has duplicates — sort + skip</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">77</td>
+      <td><a href="https://leetcode.com/problems/combinations/" target="_blank">Combinations</a></td>
+      <td class="variant">all k-sized combinations of 1..n</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">39</td>
+      <td><a href="https://leetcode.com/problems/combination-sum/" target="_blank">Combination Sum</a></td>
+      <td class="variant">reuse elements, sum = target</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">40</td>
+      <td><a href="https://leetcode.com/problems/combination-sum-ii/" target="_blank">Combination Sum II</a></td>
+      <td class="variant">no reuse, duplicates in input</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">216</td>
+      <td><a href="https://leetcode.com/problems/combination-sum-iii/" target="_blank">Combination Sum III</a></td>
+      <td class="variant">k numbers from 1–9, sum = n</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+  </table>
+  <div class="insight">Prune: <code>if remaining &lt; 0: return</code>. Dedup: sort input, <code>if i>start &amp;&amp; nums[i]==nums[i-1]: skip</code></div>
+</div>
+
+<!-- Pattern 2 -->
+<div class="pattern-card">
+  <div class="pattern-card-header">
+    <span class="pat-badge pat-amber">Pattern 2</span>
+    <span class="pat-name">Permutations</span>
+    <span class="pat-complexity">O(n!)</span>
+  </div>
+  <div class="when-line">All orderings — track used[] instead of start index</div>
+  <table>
+    <tr><th>No.</th><th>Problem</th><th>Variant</th><th>Diff</th></tr>
+    <tr>
+      <td class="num">46</td>
+      <td><a href="https://leetcode.com/problems/permutations/" target="_blank">Permutations</a></td>
+      <td class="variant">all permutations, unique input</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">47</td>
+      <td><a href="https://leetcode.com/problems/permutations-ii/" target="_blank">Permutations II</a></td>
+      <td class="variant">permutations with duplicates — sort + skip</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">31</td>
+      <td><a href="https://leetcode.com/problems/next-permutation/" target="_blank">Next Permutation</a></td>
+      <td class="variant">find next lexicographic order in O(n)</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">60</td>
+      <td><a href="https://leetcode.com/problems/permutation-sequence/" target="_blank">Permutation Sequence</a></td>
+      <td class="variant">kth permutation — math shortcut</td>
+      <td><span class="diff hard">Hard</span></td>
+    </tr>
+  </table>
+  <div class="insight">Dedup: sort, use <code>used[i]</code> flag; skip if <code>nums[i]==nums[i-1] &amp;&amp; !used[i-1]</code></div>
+</div>
+
+<!-- Pattern 3 -->
+<div class="pattern-card">
+  <div class="pattern-card-header">
+    <span class="pat-badge pat-teal">Pattern 3</span>
+    <span class="pat-name">Grid / path search</span>
+    <span class="pat-complexity">O(4ⁿ) worst case</span>
+  </div>
+  <div class="when-line">DFS on 2D grid with visited marking and restoration</div>
+  <table>
+    <tr><th>No.</th><th>Problem</th><th>Variant</th><th>Diff</th></tr>
+    <tr>
+      <td class="num">79</td>
+      <td><a href="https://leetcode.com/problems/word-search/" target="_blank">Word Search</a></td>
+      <td class="variant">find word path in grid</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">212</td>
+      <td><a href="https://leetcode.com/problems/word-search-ii/" target="_blank">Word Search II</a></td>
+      <td class="variant">find all words via Trie + DFS</td>
+      <td><span class="diff hard">Hard</span></td>
+    </tr>
+    <tr>
+      <td class="num">980</td>
+      <td><a href="https://leetcode.com/problems/unique-paths-iii/" target="_blank">Unique Paths III</a></td>
+      <td class="variant">visit every non-obstacle cell exactly once</td>
+      <td><span class="diff hard">Hard</span></td>
+    </tr>
+  </table>
+  <div class="insight">Mark cell with <code>'#'</code> before recursing, restore after — avoids extra visited array</div>
+</div>
+
+<!-- Pattern 4 -->
+<div class="pattern-card">
+  <div class="pattern-card-header">
+    <span class="pat-badge pat-coral">Pattern 4</span>
+    <span class="pat-name">Constraint satisfaction (N-Queens, Sudoku)</span>
+    <span class="pat-complexity">O(n!) with heavy pruning</span>
+  </div>
+  <div class="when-line">Place items respecting hard constraints — prune early</div>
+  <table>
+    <tr><th>No.</th><th>Problem</th><th>Variant</th><th>Diff</th></tr>
+    <tr>
+      <td class="num">51</td>
+      <td><a href="https://leetcode.com/problems/n-queens/" target="_blank">N-Queens</a></td>
+      <td class="variant">all valid queen placements</td>
+      <td><span class="diff hard">Hard</span></td>
+    </tr>
+    <tr>
+      <td class="num">52</td>
+      <td><a href="https://leetcode.com/problems/n-queens-ii/" target="_blank">N-Queens II</a></td>
+      <td class="variant">count distinct solutions</td>
+      <td><span class="diff hard">Hard</span></td>
+    </tr>
+    <tr>
+      <td class="num">37</td>
+      <td><a href="https://leetcode.com/problems/sudoku-solver/" target="_blank">Sudoku Solver</a></td>
+      <td class="variant">fill board satisfying all rules</td>
+      <td><span class="diff hard">Hard</span></td>
+    </tr>
+  </table>
+  <div class="insight">Use bitsets for row/col/diagonal constraint tracking — O(1) validity check per placement</div>
+</div>
+
+<!-- Pattern 5 -->
+<div class="pattern-card">
+  <div class="pattern-card-header">
+    <span class="pat-badge pat-purple">Pattern 5</span>
+    <span class="pat-name">String partitioning &amp; generation</span>
+    <span class="pat-complexity">O(n · 2ⁿ)</span>
+  </div>
+  <div class="when-line">Partition or generate valid strings — validate at each cut</div>
+  <table>
+    <tr><th>No.</th><th>Problem</th><th>Variant</th><th>Diff</th></tr>
+    <tr>
+      <td class="num">131</td>
+      <td><a href="https://leetcode.com/problems/palindrome-partitioning/" target="_blank">Palindrome Partitioning</a></td>
+      <td class="variant">all palindrome partitions of s</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">132</td>
+      <td><a href="https://leetcode.com/problems/palindrome-partitioning-ii/" target="_blank">Palindrome Partitioning II</a></td>
+      <td class="variant">minimum cuts (DP, not backtrack)</td>
+      <td><span class="diff hard">Hard</span></td>
+    </tr>
+    <tr>
+      <td class="num">93</td>
+      <td><a href="https://leetcode.com/problems/restore-ip-addresses/" target="_blank">Restore IP Addresses</a></td>
+      <td class="variant">all valid IP splits of digit string</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">22</td>
+      <td><a href="https://leetcode.com/problems/generate-parentheses/" target="_blank">Generate Parentheses</a></td>
+      <td class="variant">all valid bracket combos of length 2n</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">17</td>
+      <td><a href="https://leetcode.com/problems/letter-combinations-of-a-phone-number/" target="_blank">Letter Combinations of a Phone Number</a></td>
+      <td class="variant">all letter combos from digit mapping</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+  </table>
+  <div class="insight">Prune invalid segments early (e.g. IP segment > 255, leading zeros) — don't build then validate</div>
+</div>
+
+<div class="decision">
+  <div class="decision-title">Quick decision guide</div>
+  <div class="decision-row"><span class="dc">All subsets / k-size groups?</span><span class="darr">→</span><span class="ds">Pattern 1 — start index, no used[]</span></div>
+  <div class="decision-row"><span class="dc">All orderings of elements?</span><span class="darr">→</span><span class="ds">Pattern 2 — used[] boolean array</span></div>
+  <div class="decision-row"><span class="dc">Path in 2D grid?</span><span class="darr">→</span><span class="ds">Pattern 3 — mark '#', restore after DFS</span></div>
+  <div class="decision-row"><span class="dc">Placement with hard constraints?</span><span class="darr">→</span><span class="ds">Pattern 4 — bitset constraint tracking</span></div>
+  <div class="decision-row"><span class="dc">Partition or generate valid strings?</span><span class="darr">→</span><span class="ds">Pattern 5 — validate at each cut point</span></div>
+</div>
+</body>
+</html>

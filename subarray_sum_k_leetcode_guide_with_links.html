@@ -1,0 +1,226 @@
+
+<style>
+  :root { --gap: 12px; }
+  .wrap { padding: 1rem 0; font-size: 14px; }
+  .section-title { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 8px; }
+  .pattern-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+  .badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 99px; white-space: nowrap; }
+  .badge-blue { background: var(--color-background-info); color: var(--color-text-info); }
+  .badge-amber { background: #FAEEDA; color: #854F0B; }
+  .badge-teal { background: #E1F5EE; color: #0F6E56; }
+  .badge-coral { background: #FAECE7; color: #993C1D; }
+  @media (prefers-color-scheme: dark) {
+    .badge-amber { background: #412402; color: #FAC775; }
+    .badge-teal { background: #04342C; color: #5DCAA5; }
+    .badge-coral { background: #4A1B0C; color: #F0997B; }
+  }
+  .card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: var(--gap); }
+  .card-accent-blue { border-left: 3px solid #378ADD; border-radius: 0; border-right: 0.5px solid var(--color-border-tertiary); border-top: 0.5px solid var(--color-border-tertiary); border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .card-accent-amber { border-left: 3px solid #BA7517; border-radius: 0; border-right: 0.5px solid var(--color-border-tertiary); border-top: 0.5px solid var(--color-border-tertiary); border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .card-accent-teal { border-left: 3px solid #1D9E75; border-radius: 0; border-right: 0.5px solid var(--color-border-tertiary); border-top: 0.5px solid var(--color-border-tertiary); border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .card-accent-coral { border-left: 3px solid #D85A30; border-radius: 0; border-right: 0.5px solid var(--color-border-tertiary); border-top: 0.5px solid var(--color-border-tertiary); border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .pattern-name { font-size: 15px; font-weight: 500; color: var(--color-text-primary); }
+  .pattern-when { font-size: 13px; color: var(--color-text-secondary); margin: 2px 0 10px; }
+  .complexity { font-size: 12px; color: var(--color-text-secondary); font-family: var(--font-mono); }
+  table.probs { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.probs th { text-align: left; color: var(--color-text-secondary); font-weight: 500; padding: 4px 8px 6px 0; border-bottom: 0.5px solid var(--color-border-tertiary); font-size: 12px; }
+  table.probs td { padding: 6px 8px 6px 0; border-bottom: 0.5px solid var(--color-border-tertiary); vertical-align: middle; }
+  table.probs tr:last-child td { border-bottom: none; }
+  .diff { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 99px; }
+  .easy { background: #EAF3DE; color: #3B6D11; }
+  .medium { background: #FAEEDA; color: #854F0B; }
+  .hard { background: #FCEBEB; color: #A32D2D; }
+  @media (prefers-color-scheme: dark) {
+    .easy { background: #173404; color: #C0DD97; }
+    .medium { background: #412402; color: #FAC775; }
+    .hard { background: #501313; color: #F7C1C1; }
+  }
+  .prob-num { color: var(--color-text-secondary); font-size: 12px; font-family: var(--font-mono); white-space: nowrap; }
+  .prob-link { color: var(--color-text-info); font-weight: 400; text-decoration: none; }
+  .prob-link:hover { text-decoration: underline; }
+  .prob-variant { font-size: 12px; color: var(--color-text-secondary); }
+  .key-insight { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 8px 12px; font-size: 12px; color: var(--color-text-secondary); margin-top: 10px; font-family: var(--font-mono); line-height: 1.6; }
+  .divider { border: none; border-top: 0.5px solid var(--color-border-tertiary); margin: 20px 0 16px; }
+  .decision-box { background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: var(--gap); }
+  .decision-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: 13px; }
+  .decision-row:not(:last-child) { border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .cond { flex: 1.6; color: var(--color-text-secondary); }
+  .arrow-r { color: var(--color-text-tertiary); flex-shrink: 0; }
+  .sol { flex: 2; font-weight: 500; color: var(--color-text-primary); }
+</style>
+
+<div class="wrap">
+  <p class="section-title">4 solution patterns</p>
+
+  <div class="card card-accent-blue">
+    <div class="pattern-header">
+      <span class="badge badge-blue">Pattern 1</span>
+      <span class="pattern-name">Prefix sum + hashmap</span>
+      <span class="complexity">O(n) time · O(n) space</span>
+    </div>
+    <p class="pattern-when">Use when: array has negatives · exact sum = k · count or length query</p>
+    <table class="probs">
+      <tr><th>No.</th><th>Problem</th><th>Variant</th><th>Diff</th></tr>
+      <tr>
+        <td class="prob-num">560</td>
+        <td><a class="prob-link" href="https://leetcode.com/problems/subarray-sum-equals-k/" target="_blank">Subarray Sum Equals K</a></td>
+        <td class="prob-variant">count subarrays with sum = k</td>
+        <td><span class="diff medium">Med</span></td>
+      </tr>
+      <tr>
+        <td class="prob-num">325</td>
+        <td><a class="prob-link" href="https://leetcode.com/problems/maximum-size-subarray-sum-equals-k/" target="_blank">Max Size Subarray Sum Equals k</a></td>
+        <td class="prob-variant">longest subarray, sum = k</td>
+        <td><span class="diff medium">Med</span></td>
+      </tr>
+      <tr>
+        <td class="prob-num">523</td>
+        <td><a class="prob-link" href="https://leetcode.com/problems/continuous-subarray-sum/" target="_blank">Continuous Subarray Sum</a></td>
+        <td class="prob-variant">sum is multiple of k (mod trick)</td>
+        <td><span class="diff medium">Med</span></td>
+      </tr>
+      <tr>
+        <td class="prob-num">974</td>
+        <td><a class="prob-link" href="https://leetcode.com/problems/subarray-sums-divisible-by-k/" target="_blank">Subarray Sums Divisible by K</a></td>
+        <td class="prob-variant">count subarrays, sum % k = 0</td>
+        <td><span class="diff medium">Med</span></td>
+      </tr>
+      <tr>
+        <td class="prob-num">1124</td>
+        <td><a class="prob-link" href="https://leetcode.com/problems/longest-well-performing-interval/" target="_blank">Longest Well-Performing Interval</a></td>
+        <td class="prob-variant">longest subarray with score > 0</td>
+        <td><span class="diff medium">Med</span></td>
+      </tr>
+      <tr>
+        <td class="prob-num">930</td>
+        <td><a class="prob-link" href="https://leetcode.com/problems/binary-subarrays-with-sum/" target="_blank">Binary Subarrays With Sum</a></td>
+        <td class="prob-variant">binary array, count sum = goal</td>
+        <td><span class="diff medium">Med</span></td>
+      </tr>
+    </table>
+    <div class="key-insight">Core idea: if prefix[i] - prefix[j] == k → subarray [j+1..i] sums to k<br>Init map with {0: 1} · look up (prefix - k) at each step</div>
+  </div>
+
+  <div class="card card-accent-amber">
+    <div class="pattern-header">
+      <span class="badge badge-amber">Pattern 2</span>
+      <span class="pattern-name">Sliding window</span>
+      <span class="complexity">O(n) time · O(1) space</span>
+    </div>
+    <p class="pattern-when">Use when: all non-negative integers · fixed window size OR sum ≥ / ≤ k bound</p>
+    <table class="probs">
+      <tr><th>No.</th><th>Problem</th><th>Variant</th><th>Diff</th></tr>
+      <tr>
+        <td class="prob-num">209</td>
+        <td><a class="prob-link" href="https://leetcode.com/problems/minimum-size-subarray-sum/" target="_blank">Minimum Size Subarray Sum</a></td>
+        <td class="prob-variant">shortest subarray, sum ≥ k</td>
+        <td><span class="diff medium">Med</span></td>
+      </tr>
+      <tr>
+        <td class="prob-num">2461</td>
+        <td><a class="prob-link" href="https://leetcode.com/problems/maximum-sum-of-distinct-subarrays-with-length-k/" target="_blank">Maximum Sum of Distinct Subarrays With Length K</a></td>
+        <td class="prob-variant">fixed window k, all distinct</td>
+        <td><span class="diff medium">Med</span></td>
+      </tr>
+      <tr>
+        <td class="prob-num">643</td>
+        <td><a class="prob-link" href="https://leetcode.com/problems/maximum-average-subarray-i/" target="_blank">Maximum Average Subarray I</a></td>
+        <td class="prob-variant">fixed window k, max average</td>
+        <td><span class="diff easy">Easy</span></td>
+      </tr>
+      <tr>
+        <td class="prob-num">1343</td>
+        <td><a class="prob-link" href="https://leetcode.com/problems/number-of-sub-arrays-of-size-k-and-average-greater-than-or-equal-to-threshold/" target="_blank">Number of Sub-arrays of Size K and Avg ≥ Threshold</a></td>
+        <td class="prob-variant">fixed k, avg ≥ threshold</td>
+        <td><span class="diff medium">Med</span></td>
+      </tr>
+    </table>
+    <div class="key-insight">Fixed k: slide window, add right – remove left element each step<br>Variable (sum ≥ k): expand right, shrink left while sum satisfies condition</div>
+  </div>
+
+  <div class="card card-accent-teal">
+    <div class="pattern-header">
+      <span class="badge badge-teal">Pattern 3</span>
+      <span class="pattern-name">Prefix sum + monotonic deque</span>
+      <span class="complexity">O(n) time · O(n) space</span>
+    </div>
+    <p class="pattern-when">Use when: array has negatives · sum ≥ k · shortest/longest subarray length</p>
+    <table class="probs">
+      <tr><th>No.</th><th>Problem</th><th>Variant</th><th>Diff</th></tr>
+      <tr>
+        <td class="prob-num">862</td>
+        <td><a class="prob-link" href="https://leetcode.com/problems/shortest-subarray-with-sum-at-least-k/" target="_blank">Shortest Subarray with Sum at Least K</a></td>
+        <td class="prob-variant">negatives ok, shortest, sum ≥ k</td>
+        <td><span class="diff hard">Hard</span></td>
+      </tr>
+    </table>
+    <div class="key-insight">Build prefix array · maintain increasing deque of indices<br>For each i: pop front while prefix[i] - prefix[deque.front] ≥ k → candidate answer<br>Pop back while prefix[i] ≤ prefix[deque.back] (maintain monotone increase)</div>
+  </div>
+
+  <div class="card card-accent-coral">
+    <div class="pattern-header">
+      <span class="badge badge-coral">Pattern 4</span>
+      <span class="pattern-name">Kadane's algorithm / DP</span>
+      <span class="complexity">O(n) time · O(1) space</span>
+    </div>
+    <p class="pattern-when">Use when: find max/min subarray sum (no specific k boundary, or unbounded)</p>
+    <table class="probs">
+      <tr><th>No.</th><th>Problem</th><th>Variant</th><th>Diff</th></tr>
+      <tr>
+        <td class="prob-num">53</td>
+        <td><a class="prob-link" href="https://leetcode.com/problems/maximum-subarray/" target="_blank">Maximum Subarray</a></td>
+        <td class="prob-variant">max sum, no k constraint</td>
+        <td><span class="diff medium">Med</span></td>
+      </tr>
+      <tr>
+        <td class="prob-num">918</td>
+        <td><a class="prob-link" href="https://leetcode.com/problems/maximum-sum-circular-subarray/" target="_blank">Maximum Sum Circular Subarray</a></td>
+        <td class="prob-variant">circular array, max sum</td>
+        <td><span class="diff medium">Med</span></td>
+      </tr>
+      <tr>
+        <td class="prob-num">1749</td>
+        <td><a class="prob-link" href="https://leetcode.com/problems/maximum-absolute-sum-of-any-subarray/" target="_blank">Maximum Absolute Sum of Any Subarray</a></td>
+        <td class="prob-variant">max |sum| subarray</td>
+        <td><span class="diff medium">Med</span></td>
+      </tr>
+    </table>
+    <div class="key-insight">cur = max(nums[i], cur + nums[i]) · ans = max(ans, cur)<br>No hashmap needed — extend or restart at each element</div>
+  </div>
+
+  <hr class="divider">
+  <p class="section-title">Quick decision guide</p>
+
+  <div class="decision-box">
+    <div class="decision-row">
+      <span class="cond">Array has negatives + exact sum = k?</span>
+      <span class="arrow-r">→</span>
+      <span class="sol">Pattern 1 — prefix + hashmap</span>
+    </div>
+    <div class="decision-row">
+      <span class="cond">Sum divisible by k / modulo condition?</span>
+      <span class="arrow-r">→</span>
+      <span class="sol">Pattern 1 — track prefix % k in map</span>
+    </div>
+    <div class="decision-row">
+      <span class="cond">All non-negatives + sum ≥ / ≤ k?</span>
+      <span class="arrow-r">→</span>
+      <span class="sol">Pattern 2 — sliding window</span>
+    </div>
+    <div class="decision-row">
+      <span class="cond">Fixed window of size k?</span>
+      <span class="arrow-r">→</span>
+      <span class="sol">Pattern 2 — fixed sliding window</span>
+    </div>
+    <div class="decision-row">
+      <span class="cond">Negatives + shortest subarray, sum ≥ k?</span>
+      <span class="arrow-r">→</span>
+      <span class="sol">Pattern 3 — prefix + deque</span>
+    </div>
+    <div class="decision-row">
+      <span class="cond">Just maximize / minimize subarray sum?</span>
+      <span class="arrow-r">→</span>
+      <span class="sol">Pattern 4 — Kadane's DP</span>
+    </div>
+  </div>
+</div>

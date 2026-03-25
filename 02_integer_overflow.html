@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>整数溢出 (Integer Overflow) — LeetCode Patterns</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0d0f14;
+    --surface: #141720;
+    --border: #252a36;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --accent-blue: #4f8ef7;
+    --accent-amber: #f5a623;
+    --accent-teal: #2dd4a0;
+    --accent-coral: #f06060;
+    --easy: #22c55e;
+    --medium: #f59e0b;
+    --hard: #ef4444;
+    --font-head: 'Syne', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-mono); min-height: 100vh; padding: 2rem 1.5rem 4rem; }
+  .page-header { margin-bottom: 2.5rem; border-left: 3px solid var(--accent-amber); padding-left: 1.2rem; }
+  .topic-label { font-size: 11px; color: var(--accent-amber); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
+  h1 { font-family: var(--font-head); font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 700; color: var(--text); line-height: 1.2; }
+  .subtitle { font-size: 13px; color: var(--muted); margin-top: 8px; }
+  .overflow-note { background: rgba(245,166,35,0.08); border: 1px solid rgba(245,166,35,0.25); border-radius: 8px; padding: 12px 16px; margin-bottom: 1.5rem; font-size: 12px; color: var(--accent-amber); line-height: 1.8; }
+  .overflow-note strong { color: var(--text); }
+  .pattern-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 1.25rem; overflow: hidden; }
+  .pattern-card-header { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .pat-badge { font-size: 10px; font-weight: 500; padding: 3px 10px; border-radius: 99px; white-space: nowrap; letter-spacing: 0.04em; }
+  .pat-blue { background: rgba(79,142,247,0.15); color: var(--accent-blue); border: 1px solid rgba(79,142,247,0.3); }
+  .pat-amber { background: rgba(245,166,35,0.15); color: var(--accent-amber); border: 1px solid rgba(245,166,35,0.3); }
+  .pat-teal { background: rgba(45,212,160,0.15); color: var(--accent-teal); border: 1px solid rgba(45,212,160,0.3); }
+  .pat-coral { background: rgba(240,96,96,0.15); color: var(--accent-coral); border: 1px solid rgba(240,96,96,0.3); }
+  .pat-name { font-family: var(--font-head); font-size: 15px; font-weight: 600; color: var(--text); }
+  .pat-complexity { font-size: 11px; color: var(--muted); margin-left: auto; }
+  .when-line { font-size: 12px; color: var(--muted); padding: 8px 18px; border-bottom: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; }
+  th { font-size: 11px; color: var(--muted); text-align: left; padding: 8px 18px; border-bottom: 1px solid var(--border); letter-spacing: 0.06em; text-transform: uppercase; }
+  td { padding: 10px 18px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  .num { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  a { color: var(--accent-blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .variant { font-size: 11px; color: var(--muted); }
+  .trap { font-size: 11px; color: var(--accent-amber); }
+  .diff { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 99px; white-space: nowrap; }
+  .easy  { background: rgba(34,197,94,0.12);  color: var(--easy);   border: 1px solid rgba(34,197,94,0.3); }
+  .medium{ background: rgba(245,158,11,0.12); color: var(--medium); border: 1px solid rgba(245,158,11,0.3); }
+  .hard  { background: rgba(239,68,68,0.12);  color: var(--hard);   border: 1px solid rgba(239,68,68,0.3); }
+  .insight { background: #0a0c10; border-top: 1px solid var(--border); padding: 12px 18px; font-size: 12px; color: var(--muted); line-height: 1.7; }
+  .insight code { color: var(--accent-amber); }
+  .decision { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-top: 2rem; }
+  .decision-title { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; padding: 12px 18px; border-bottom: 1px solid var(--border); }
+  .decision-row { display: flex; align-items: center; gap: 10px; padding: 10px 18px; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .decision-row:last-child { border-bottom: none; }
+  .dc { flex: 1.6; color: var(--muted); }
+  .darr { color: var(--border); flex-shrink: 0; }
+  .ds { flex: 2; color: var(--text); }
+</style>
+</head>
+<body>
+<div class="page-header">
+  <div class="topic-label">LeetCode Patterns</div>
+  <h1>整数溢出 · Integer Overflow</h1>
+  <div class="subtitle">Problems where overflow is a hidden trap or the core constraint</div>
+</div>
+
+<div class="overflow-note">
+  <strong>Java/C++ limits:</strong> int → ±2,147,483,647 (2³¹−1) &nbsp;|&nbsp; long → ±9,223,372,036,854,775,807 (2⁶³−1)<br>
+  <strong>Common traps:</strong> multiplication before division · mid = (lo+hi)/2 · factorial/combination · reversing digits · recursive sum accumulation
+</div>
+
+<!-- Pattern 1 -->
+<div class="pattern-card">
+  <div class="pattern-card-header">
+    <span class="pat-badge pat-blue">Pattern 1</span>
+    <span class="pat-name">Digit / bit reversal overflow</span>
+    <span class="pat-complexity">O(log n)</span>
+  </div>
+  <div class="when-line">Reversing an integer — result may exceed 32-bit range</div>
+  <table>
+    <tr><th>No.</th><th>Problem</th><th>Overflow trap</th><th>Diff</th></tr>
+    <tr>
+      <td class="num">7</td>
+      <td><a href="https://leetcode.com/problems/reverse-integer/" target="_blank">Reverse Integer</a></td>
+      <td class="trap">reversed digits exceed INT_MAX/MIN</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">9</td>
+      <td><a href="https://leetcode.com/problems/palindrome-number/" target="_blank">Palindrome Number</a></td>
+      <td class="trap">reverse half to avoid overflow</td>
+      <td><span class="diff easy">Easy</span></td>
+    </tr>
+    <tr>
+      <td class="num">8</td>
+      <td><a href="https://leetcode.com/problems/string-to-integer-atoi/" target="_blank">String to Integer (atoi)</a></td>
+      <td class="trap">clamp to [INT_MIN, INT_MAX] before commit</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+  </table>
+  <div class="insight">Fix: check <code>rev > INT_MAX / 10</code> BEFORE multiplying, or use long and compare at end</div>
+</div>
+
+<!-- Pattern 2 -->
+<div class="pattern-card">
+  <div class="pattern-card-header">
+    <span class="pat-badge pat-amber">Pattern 2</span>
+    <span class="pat-name">Binary search mid overflow</span>
+    <span class="pat-complexity">O(log n)</span>
+  </div>
+  <div class="when-line">Classic (lo + hi) / 2 overflows when both are near INT_MAX</div>
+  <table>
+    <tr><th>No.</th><th>Problem</th><th>Overflow trap</th><th>Diff</th></tr>
+    <tr>
+      <td class="num">69</td>
+      <td><a href="https://leetcode.com/problems/sqrtx/" target="_blank">Sqrt(x)</a></td>
+      <td class="trap">mid*mid overflows int; use long</td>
+      <td><span class="diff easy">Easy</span></td>
+    </tr>
+    <tr>
+      <td class="num">29</td>
+      <td><a href="https://leetcode.com/problems/divide-two-integers/" target="_blank">Divide Two Integers</a></td>
+      <td class="trap">INT_MIN / -1 = INT_MAX + 1</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">50</td>
+      <td><a href="https://leetcode.com/problems/powx-n/" target="_blank">Pow(x, n)</a></td>
+      <td class="trap">n = INT_MIN → -n overflows; use long n</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+  </table>
+  <div class="insight">Fix: <code>mid = lo + (hi − lo) / 2</code> — never <code>(lo + hi) / 2</code>. For products use <code>long</code>.</div>
+</div>
+
+<!-- Pattern 3 -->
+<div class="pattern-card">
+  <div class="pattern-card-header">
+    <span class="pat-badge pat-teal">Pattern 3</span>
+    <span class="pat-name">Modular arithmetic (large numbers)</span>
+    <span class="pat-complexity">O(n) or O(log n)</span>
+  </div>
+  <div class="when-line">Answer is huge — return result modulo 10⁹+7 or similar prime</div>
+  <table>
+    <tr><th>No.</th><th>Problem</th><th>Overflow trap</th><th>Diff</th></tr>
+    <tr>
+      <td class="num">509</td>
+      <td><a href="https://leetcode.com/problems/fibonacci-number/" target="_blank">Fibonacci Number</a></td>
+      <td class="trap">large fib grows unbounded without mod</td>
+      <td><span class="diff easy">Easy</span></td>
+    </tr>
+    <tr>
+      <td class="num">62</td>
+      <td><a href="https://leetcode.com/problems/unique-paths/" target="_blank">Unique Paths</a></td>
+      <td class="trap">C(m+n,m) overflows int in brute force</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">1922</td>
+      <td><a href="https://leetcode.com/problems/count-good-numbers/" target="_blank">Count Good Numbers</a></td>
+      <td class="trap">fast power with mod, n up to 10¹⁵</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">2438</td>
+      <td><a href="https://leetcode.com/problems/range-product-queries-of-powers/" target="_blank">Range Product Queries of Powers</a></td>
+      <td class="trap">product of powers mod 10⁹+7</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+  </table>
+  <div class="insight">Rule: apply <code>% MOD</code> after every addition AND multiplication — never accumulate then mod</div>
+</div>
+
+<!-- Pattern 4 -->
+<div class="pattern-card">
+  <div class="pattern-card-header">
+    <span class="pat-badge pat-coral">Pattern 4</span>
+    <span class="pat-name">Overflow as explicit constraint / edge case</span>
+    <span class="pat-complexity">O(1) or O(n)</span>
+  </div>
+  <div class="when-line">Problem statement explicitly involves boundary values or 32-bit ranges</div>
+  <table>
+    <tr><th>No.</th><th>Problem</th><th>Overflow trap</th><th>Diff</th></tr>
+    <tr>
+      <td class="num">43</td>
+      <td><a href="https://leetcode.com/problems/multiply-strings/" target="_blank">Multiply Strings</a></td>
+      <td class="trap">numbers too large for any integer type</td>
+      <td><span class="diff medium">Med</span></td>
+    </tr>
+    <tr>
+      <td class="num">66</td>
+      <td><a href="https://leetcode.com/problems/plus-one/" target="_blank">Plus One</a></td>
+      <td class="trap">carry propagation on all-9 array</td>
+      <td><span class="diff easy">Easy</span></td>
+    </tr>
+    <tr>
+      <td class="num">2147</td>
+      <td><a href="https://leetcode.com/problems/number-of-ways-to-divide-a-long-corridor/" target="_blank">Number of Ways to Divide a Long Corridor</a></td>
+      <td class="trap">multiply large segment counts, mod required</td>
+      <td><span class="diff hard">Hard</span></td>
+    </tr>
+  </table>
+  <div class="insight">When numbers exceed 64-bit: use <code>BigInteger</code> (Java), <code>Python int</code> (unlimited), or string-based arithmetic</div>
+</div>
+
+<div class="decision">
+  <div class="decision-title">Quick decision guide</div>
+  <div class="decision-row"><span class="dc">Reversing / parsing digits?</span><span class="darr">→</span><span class="ds">Pattern 1 — check before multiply</span></div>
+  <div class="decision-row"><span class="dc">Binary search or exponentiation?</span><span class="darr">→</span><span class="ds">Pattern 2 — lo + (hi−lo)/2, cast to long</span></div>
+  <div class="decision-row"><span class="dc">Answer mod 10⁹+7?</span><span class="darr">→</span><span class="ds">Pattern 3 — mod every op, use fast power</span></div>
+  <div class="decision-row"><span class="dc">Numbers too large for any int type?</span><span class="darr">→</span><span class="ds">Pattern 4 — string arithmetic / BigInteger</span></div>
+</div>
+</body>
+</html>

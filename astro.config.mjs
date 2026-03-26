@@ -4,6 +4,6 @@ import { defineConfig } from 'astro/config';
 // If the repo is named `algocards`, keep `base` as-is.
 // If you use a custom domain, remove `base` entirely.
 export default defineConfig({
-  site: 'https://YOUR_GITHUB_USERNAME.github.io',
+  site: 'https://xxueewa.github.io',
   base: '/algocards',
 });

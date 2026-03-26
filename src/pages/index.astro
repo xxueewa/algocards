@@ -67,12 +67,11 @@ const cards = [
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #0d0f14;
-      --surface: #141720;
+      --bg: #ffffff;
       --border: #1e2230;
-      --text: #e8eaf0;
+      --text: #1e2230;
       --muted: #6b7280;
-      --hover-surface: #1a1f2e;
+      --hover-surface: rgb(255, 255, 255)
     }
 
     body {
@@ -113,9 +112,24 @@ const cards = [
       line-height: 1.6;
     }
 
-    .grid {
+    .grid-wrapper {
+      position: relative;
       max-width: 900px;
       margin: 0 auto;
+      overflow: visible;
+    }
+
+    .square {
+      position: absolute;
+      background: rgba(195, 198, 246, 0.2);
+      border-radius: 4px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .grid {
+      position: relative;
+      z-index: 1;
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
       gap: 1rem;
@@ -124,7 +138,7 @@ const cards = [
     .card {
       display: block;
       text-decoration: none;
-      background: var(--surface);
+      background: rgba(255, 255, 255, 0.2);
       border: 1px solid var(--border);
       border-radius: 10px;
       padding: 1.5rem;
@@ -193,22 +207,64 @@ const cards = [
 <body>
   <header>
     <p class="label">Algorithm Reference</p>
-    <h1>AlgoCards</h1>
+    <h1 id="box">AlgoCards</h1>
     <p class="subtitle">Pattern-first reference cards for coding interviews.</p>
   </header>
 
-  <main class="grid">
-    {cards.map(card => (
-      <a class="card" href={card.href} style={`--accent: ${card.accent}`}>
-        <p class="card-num">Pattern {card.num}</p>
-        <p class="card-title">{card.title}</p>
-        <p class="card-desc">{card.desc}</p>
-      </a>
-    ))}
-  </main>
+  <div class="grid-wrapper">
+    <div class="square" style="width:120px;height:120px;top:-30px;left:-50px;"></div>
+    <div class="square" style="width:80px;height:80px;top:60px;right:-20px;"></div>
+    <div class="square" style="width:160px;height:160px;bottom:-40px;left:30%;"></div>
+    <div class="square" style="width:60px;height:60px;bottom:20px;right:60px;"></div>
+    <div class="square" style="width:100px;height:100px;top:40%;left:-30px;"></div>
+    <main class="grid">
+      {cards.map(card => (
+        <a class="card" href={card.href} style={`--accent: ${card.accent}`}>
+          <p class="card-num">Pattern {card.num}</p>
+          <p class="card-title">{card.title}</p>
+          <p class="card-desc">{card.desc}</p>
+        </a>
+      ))}
+    </main>
+  </div>
 
   <footer>
     <p>AlgoCards — LeetCode pattern reference</p>
   </footer>
 </body>
 </html>
+
+<script>
+import { animate, stagger, splitText, createDraggable, waapi, utils } from 'animejs';
+
+const { chars } = splitText('h1', { words: false, chars: true });
+
+animate(chars, {
+  y: [
+    { to: '-2.75rem', ease: 'outExpo', duration: 600 },
+    { to: 0, ease: 'outBounce', duration: 800, delay: 100 }
+  ],
+  rotate: {
+    from: '-1turn',
+    delay: 0
+  },
+  delay: stagger(50),
+  ease: 'inOutCirc',
+  loopDelay: 1000,
+  loop: true
+});
+
+const $squares = utils.$('.square');
+
+const animateSquares = () => {
+  waapi.animate($squares, {
+    x: () => utils.random(-50, -10) + 'rem',
+    y: () => utils.random(-50, -10) + 'rem',
+    rotateX: () => utils.random(-90, 90),
+    rotateY: () => utils.random(-90, 90),
+    onComplete: () => animateSquares()
+  });
+}
+
+animateSquares();
+</script>
